@@ -35,7 +35,38 @@ class Firebase {
   doPasswordUpdate = (password) =>
     this.auth.currentUser.updatePassword(password);
 
-  // User API
+  // *** Merge Auth and DB User API *** //
+  onAuthUserListener = (next, fallback) =>
+    // The helper function onAuthStateChanged() receives a function as parameter that has access to
+    // the authenticated user. Also, the passed function is called every time something changes for the
+    // authenticated user. It is called when a user signs up, signs in, and signs out.
+    this.auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        this.user(authUser.uid)
+          .once("value")
+          .then((snapshot) => {
+            const dbUser = snapshot.val();
+
+            // default empty roles
+            if (!dbUser.roles) {
+              dbUser.roles = {};
+            }
+
+            // merge auth and db user
+            authUser = {
+              uid: authUser.uid,
+              email: authUser.email,
+              ...dbUser,
+            };
+
+            next(authUser);
+          });
+      } else {
+        fallback();
+      }
+    });
+
+  // *** User API ***
   // The paths in the ref() method match the location where users will be stored in Firebase’s realtime database API
   user = (uid) => this.db.ref(`users/${uid}`);
 
