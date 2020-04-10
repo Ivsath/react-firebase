@@ -23,6 +23,8 @@ class Firebase {
     this.googleProvider = new app.auth.GoogleAuthProvider();
     // Create a Facebook App to use and enable in the firebase console: https://bit.ly/34C8Fjj
     this.facebookProvider = new app.auth.FacebookAuthProvider();
+    // https://bit.ly/2UZfcRD
+    this.twitterProvider = new app.auth.TwitterAuthProvider();
   }
 
   // *** Auth API ***
@@ -35,6 +37,8 @@ class Firebase {
   doSignInWithGoogle = () => this.auth.signInWithPopup(this.googleProvider);
 
   doSignInWithFacebook = () => this.auth.signInWithPopup(this.facebookProvider);
+
+  doSignInWithTwitter = () => this.auth.signInWithPopup(this.twitterProvider);
 
   doSignOut = () => this.auth.signOut();
 
